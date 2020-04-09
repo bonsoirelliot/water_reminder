@@ -9,29 +9,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'WaterReminder',
-      home: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/ocean.png"),
-            fit: BoxFit.cover,
-            alignment: Alignment.centerRight,
-          ),
-        ),
-        child: InitialPage(),
-      ),
-      theme: ThemeData(backgroundColor: Colors.blue[100]),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'WaterReminder',
+        home: Container(decoration: CommonDecoration),
+        theme: ThemeData(backgroundColor: Colors.blue[100]),
+        initialRoute: InitialPage.id,
+        routes: {
+          InitialPage.id: (context) => InitialPage(),
+          HomePage.id: (context) => HomePage(),
+        });
   }
 }
 
 class InitialPage extends StatelessWidget {
+  static const String id = 'INITIALSCREEN';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        child: SafeArea(
           child: Column(
             children: <Widget>[
               Text(
@@ -39,26 +36,25 @@ class InitialPage extends StatelessWidget {
                 style: MediumTextStyle,
               ),
               SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  CustomSelectionButton(
-                      text: 'man', callback: () {}, right: true),
-                  CustomSelectionButton(
-                      text: 'woman', callback: () {}, right: false)
-                ],
-                mainAxisAlignment: MainAxisAlignment.center,
-              ),
+              Toggle(),
               SpaceWithSlider(
                   text: "age", minSliderValue: 0, maxSliderValue: 100),
               SpaceWithSlider(
                   text: "weight", minSliderValue: 10, maxSliderValue: 300),
               SpaceWithSlider(
                   text: "height", minSliderValue: 50, maxSliderValue: 300),
-              CustomButton(text: "continue", callback: () {}),
+              CustomButton(
+                  text: "continue",
+                  callback: () {
+                    Navigator.of(context).pushNamed(HomePage.id);
+                  }),
             ],
             mainAxisAlignment: MainAxisAlignment.center,
           ),
-        ));
+        ),
+        decoration: CommonDecoration,
+      ),
+    );
   }
 }
 
@@ -155,39 +151,129 @@ class CustomButton extends StatelessWidget {
   }
 }
 
-class CustomSelectionButton extends StatelessWidget {
-  final VoidCallback callback;
-  final String text;
-  final bool right;
+class Toggle extends StatefulWidget {
+  @override
+  _ToggleState createState() => _ToggleState();
+}
 
-  const CustomSelectionButton({Key key, this.callback, this.text, this.right})
-      : super(key: key);
+class _ToggleState extends State<Toggle> {
+  List<bool> isSelected = [false, false];
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Material(
-        elevation: 6.0,
-        color: Color(0xFFFF1E56),
-        borderRadius: right
-            ? BorderRadius.only(
-                topLeft: Radius.circular(50),
-                bottomLeft: Radius.circular(50),
-              )
-            : BorderRadius.only(
-                topRight: Radius.circular(50),
-                bottomRight: Radius.circular(50),
-              ),
-        child: MaterialButton(
-          onPressed: callback,
-          minWidth: 130.0,
-          height: 45.0,
-          child: Text(
-            text,
-            style: MediumTextStyle,
+    return ToggleButtons(
+        children: <Widget>[
+          Container(
+            child: Text(
+              'man',
+              style: MediumTextStyle,
+              textAlign: TextAlign.center,
+            ),
+            width: 130,
+            height: 45,
+            padding: EdgeInsets.only(top: 10),
           ),
-        ),
+          Container(
+            child: Text(
+              'woman',
+              style: MediumTextStyle,
+              textAlign: TextAlign.center,
+            ),
+            width: 130,
+            height: 45,
+            padding: EdgeInsets.only(top: 10),
+          )
+        ],
+        fillColor: Color(0xFFFF1E56),
+        disabledColor: Colors.white,
+        selectedColor: Colors.transparent,
+        renderBorder: false,
+        isSelected: isSelected,
+        borderRadius: BorderRadius.circular(50),
+        onPressed: (int index) {
+          setState(() {
+            for (int indexBtn = 0; indexBtn < isSelected.length; indexBtn++) {
+              if (indexBtn == index) {
+                isSelected[indexBtn] = !isSelected[indexBtn];
+              } else {
+                isSelected[indexBtn] = false;
+              }
+            }
+          });
+        });
+  }
+}
+
+class HomePage extends StatelessWidget {
+  static const String id = 'HOMESCREEN';
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: SafeArea(
+            child: Column(
+          children: <Widget>[
+            StatusBar(),
+          ],
+        )),
+        decoration: CommonDecoration,
       ),
+      backgroundColor: Colors.transparent,
+    );
+  }
+}
+
+class StatusBar extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            Text(
+              'daily goal',
+              style: HomePageTextStyle,
+            ),
+            Text(
+              '12',
+              style: HomePageValueTextStyle,
+            ),
+          ],
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Column(
+          children: <Widget>[
+            Text(
+              'completed',
+              style: HomePageTextStyle,
+            ),
+            Text(
+              '12',
+              style: HomePageValueTextStyle,
+            ),
+          ],
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Column(
+          children: <Widget>[
+            Text(
+              'Status',
+              style: HomePageTextStyle,
+            ),
+            Text(
+              'not enough',
+              style: HomePageValueTextStyle,
+            ),
+          ],
+        ),
+        SizedBox(
+          width: 8,
+        ),
+      ],
+      mainAxisAlignment: MainAxisAlignment.center,
     );
   }
 }
