@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 
 class ButtonsPanel extends StatefulWidget {
   ButtonsPanel({Key key}) : super(key: key);
@@ -26,11 +28,27 @@ class _ButtonsPanelState extends State<ButtonsPanel> {
             padding: EdgeInsets.only(bottom: 15),
           ),
           new Container(
-            child: new IconButton(
-                icon: new Image.asset("assets/icons/add.png"),
-                iconSize: 70,
-                onPressed: null),
-            padding: EdgeInsets.only(bottom: 40),
+            child: FocusedMenuHolder(
+                child: new Image.asset("assets/icons/add.png"),
+                blurSize: 5.0,
+                onPressed: () {
+                  print("I was pressed");
+                },
+                menuItems: <FocusedMenuItem>[
+                  FocusedMenuItem(
+                    title: new Text('Tea'),
+                    onPressed: () {},
+                  ),
+                  FocusedMenuItem(
+                    title: new Text('Coffee'),
+                    onPressed: () {},
+                  ),
+                  FocusedMenuItem(
+                    title: new Text('Water'),
+                    onPressed: () {},
+                  )
+                ]),
+            padding: EdgeInsets.only(bottom: 30),
           ),
           new Container(
             child: new IconButton(
